@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 1s ease-in-out;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+            z-index: 2;
+        }
+
+        .clock {
+            z-index: 3;
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .date {
+            z-index: 3;
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            /* Change this line */
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .background.fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background" id="background1"></div>
+    <div class="background" id="background2"></div>
+    <div class="overlay" id="overlay"></div>
+    <div class="clock" id="clock"></div>
+    <div class="date" id="date"></div>
+    <script>
+        var showSeconds = window.location.search.indexOf('showSeconds=true') > -1;
+        var currentBackground = 1;
+
+        function updateTime() {
+            var now = new Date();
+            var clockDiv = document.getElementById('clock');
+            var dateDiv = document.getElementById('date');
+            var monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            clockDiv.textContent = showSeconds ? now.toLocaleTimeString() : now.toLocaleTimeString().slice(0, -3);
+            dateDiv.textContent = now.getDate() + ' ' + monthNames[now.getMonth()] + ' ' + now.getFullYear();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Fetch a new image every 30 seconds
+        function updateImage() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://source.unsplash.com/random/1920x1080', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var newBackground = currentBackground == 1 ? 2 : 1;
+                    document.getElementById('background' + newBackground).style.backgroundImage = 'url(' + xhr.responseURL + ')';
+                    document.getElementById('background' + currentBackground).className = 'background fade-out';
+                    document.getElementById('background' + newBackground).className = 'background';
+                    currentBackground = newBackground;
+                }
+            }
+            xhr.send();
+        }
+        setInterval(updateImage, 30000);
+        updateImage();
+
+        var touchStartX = null;
+        var minSwipeDistance = 300; // Minimum distance to consider as a swipe
+
+        document.body.addEventListener('touchstart', function (e) {
+            touchStartX = e.touches[0].clientX;
+        }, false);
+
+        document.body.addEventListener('touchmove', function (e) {
+            if (touchStartX === null) {
+                return;
+            }
+            var touchEndX = e.changedTouches[0].clientX;
+            var diffX = touchStartX - touchEndX;
+            if (Math.abs(diffX) > minSwipeDistance) { // Swipe distance is more than minimum required
+                if (diffX > 0) { // Swiped from right to left
+                    updateImage(); // Fetch new image
+                }
+                touchStartX = null; // Reset for next swipe
+            }
+        }, false);
+
+        document.body.addEventListener('touchend', function (e) {
+            touchStartX = null; // Reset for next swipe
+        }, false);
+    </script>
+</body>
+
+</html>
