@@ -51,7 +51,17 @@
             position: absolute;
             bottom: 50px;
             left: 50px;
-            /* Change this line */
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .weather {
+            z-index: 3;
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 24px;
             color: rgba(255, 255, 255, 0.8);
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -68,6 +78,7 @@
     <div class="background" id="background2"></div>
     <div class="overlay" id="overlay"></div>
     <div class="clock" id="clock"></div>
+    <div class="weather" id="weather"></div>
     <div class="date" id="date"></div>
     <script>
         var showSeconds = window.location.search.indexOf('showSeconds=true') > -1;
@@ -89,7 +100,9 @@
         // Fetch a new image every 30 seconds
         function updateImage() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://source.unsplash.com/random/1920x1080', true);
+            xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/images/unsplash', true);
+            xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+            xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var newBackground = currentBackground == 1 ? 2 : 1;
@@ -128,6 +141,37 @@
         document.body.addEventListener('touchend', function (e) {
             touchStartX = null; // Reset for next swipe
         }, false);
+
+        function updateWeather() {
+            var location = localStorage.getItem('location');
+            if (!location) {
+                location = prompt('Please enter your location:');
+                if (location === null) {
+                    return; // User clicked cancel
+                }
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/weather/' + location, true);
+            xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+            xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        localStorage.setItem('location', location);
+                        var weather = JSON.parse(xhr.responseText);
+                        document.getElementById('weather').textContent = Math.round(weather.temperature) + '°C in ' + weather.location;
+                    } else {
+                        localStorage.removeItem('location');
+                        alert('Failed to get weather information. Click cancel to disable EeeWeather.');
+                        updateWeather();
+                    }
+                }
+            }
+            xhr.send();
+        }
+        setInterval(updateWeather, 1800000); // 30 minutes
+        updateWeather();
     </script>
 </body>
 
