@@ -14,10 +14,10 @@
         }
 
         body {
-            position: relative;
-            overflow: auto;
-            height: calc(100% + 100px);
-        }
+    position: relative;
+    overflow: auto;
+    height: calc(100% + 100px);
+}
 
         .background {
             position: absolute;
@@ -77,24 +77,15 @@
         .background.fade-out {
             opacity: 0;
         }
-
-        #content {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: auto;
-        }
     </style>
 </head>
 
-<body id="content">
+<body>
     <div class="background" id="background1"></div>
     <div class="background" id="background2"></div>
     <div class="overlay" id="overlay"></div>
     <div class="clock" id="clock"></div>
-    <div class="weather" id="weather"></div>
+    <div class="weather" id="weather">Loading EeeWeather...</div>
     <div class="date" id="date"></div>
     <script>
         var showSeconds = window.location.search.indexOf('showSeconds=true') > -1;
@@ -113,6 +104,20 @@
         setInterval(updateTime, 1000);
         updateTime();
 
+        var requestInterval = 30000; // 30 seconds
+        var requestOffset = 5000; // 5 seconds before the 30-second mark
+
+        setInterval(function() {
+            var now = new Date();
+            var seconds = now.getSeconds();
+            var milliseconds = now.getMilliseconds();
+            var timeUntilNextRequest = requestInterval - (seconds * 1000 + milliseconds) + requestOffset;
+
+            setTimeout(function() {
+                updateImage();
+            }, timeUntilNextRequest);
+        }, requestInterval);
+
         function updateImage() {
             var xhr = new XMLHttpRequest();
             var timestamp = new Date().getTime(); // Generate a unique timestamp
@@ -123,12 +128,16 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var newBackground = currentBackground == 1 ? 2 : 1;
-                    document.getElementById('background' + newBackground).style.backgroundImage = 'url(' + xhr.responseURL + ')';
-                    document.getElementById('background' + currentBackground).className = 'background fade-out';
-                    document.getElementById('background' + newBackground).className = 'background';
-                    currentBackground = newBackground;
+                    var img = new Image();
+                    img.onload = function () {
+                        document.getElementById('background' + newBackground).style.backgroundImage = 'url(' + img.src + ')';
+                        document.getElementById('background' + currentBackground).className = 'background fade-out';
+                        document.getElementById('background' + newBackground).className = 'background';
+                        currentBackground = newBackground;
+                    };
+                    img.src = xhr.responseURL;
                 }
-            }
+            };
             xhr.send();
         }
         setInterval(updateImage, 30000);
