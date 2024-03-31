@@ -99,7 +99,7 @@
 
         function updateImage() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/images/unsplash', true);
+            xhr.open('GET', 'http://eeeapi.atticat.tech/images/unsplash', true);
             xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
             xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
             xhr.onreadystatechange = function () {
@@ -151,7 +151,7 @@
             }
 
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/weather/' + location, true);
+            xhr.open('GET', 'http://eeeapi.atticat.tech/weather/' + location, true);
             xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
             xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
             xhr.onreadystatechange = function () {
