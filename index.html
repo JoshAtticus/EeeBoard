@@ -89,7 +89,7 @@
         // Fetch a new image every 30 seconds
         function updateImage() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://source.unsplash.com/random/1920x1080', true);
+            xhr.open('GET', 'http://source.unsplash.com/random/1920x1080', true);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var newBackground = currentBackground == 1 ? 2 : 1;
