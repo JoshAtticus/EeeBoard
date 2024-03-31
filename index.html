@@ -10,6 +10,13 @@
             margin: 0;
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+            padding-bottom: 100px;
+        }
+
+        body {
+            position: relative;
+            overflow: auto;
+            height: calc(100% + 100px);
         }
 
         .background {
@@ -59,7 +66,7 @@
         .weather {
             z-index: 3;
             position: absolute;
-            bottom: 70px;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 24px;
@@ -70,10 +77,19 @@
         .background.fade-out {
             opacity: 0;
         }
+
+        #content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+        }
     </style>
 </head>
 
-<body>
+<body id="content">
     <div class="background" id="background1"></div>
     <div class="background" id="background2"></div>
     <div class="overlay" id="overlay"></div>
@@ -99,7 +115,9 @@
 
         function updateImage() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://eeeapi.atticat.tech/images/unsplash', true);
+            var timestamp = new Date().getTime(); // Generate a unique timestamp
+            var url = 'http://eeeapi.atticat.tech/images/unsplash?timestamp=' + timestamp; // Add the timestamp as a query parameter
+            xhr.open('GET', url, true);
             xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
             xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
             xhr.onreadystatechange = function () {
