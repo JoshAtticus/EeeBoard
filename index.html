@@ -97,7 +97,6 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Fetch a new image every 30 seconds
         function updateImage() {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/images/unsplash', true);
@@ -118,7 +117,7 @@
         updateImage();
 
         var touchStartX = null;
-        var minSwipeDistance = 300; // Minimum distance to consider as a swipe
+        var minSwipeDistance = 300;
 
         document.body.addEventListener('touchstart', function (e) {
             touchStartX = e.touches[0].clientX;
@@ -130,24 +129,24 @@
             }
             var touchEndX = e.changedTouches[0].clientX;
             var diffX = touchStartX - touchEndX;
-            if (Math.abs(diffX) > minSwipeDistance) { // Swipe distance is more than minimum required
-                if (diffX > 0) { // Swiped from right to left
-                    updateImage(); // Fetch new image
+            if (Math.abs(diffX) > minSwipeDistance) {
+                if (diffX > 0) {
+                    updateImage();
                 }
-                touchStartX = null; // Reset for next swipe
+                touchStartX = null;
             }
         }, false);
 
         document.body.addEventListener('touchend', function (e) {
-            touchStartX = null; // Reset for next swipe
+            touchStartX = null;
         }, false);
 
         function updateWeather() {
-            var location = localStorage.getItem('location');
+            var location = window.localStorage.getItem('location');
             if (!location) {
-                location = prompt('Please enter your location:');
+                location = window.prompt('Please enter your location:');
                 if (location === null) {
-                    return; // User clicked cancel
+                    return;
                 }
             }
 
@@ -158,11 +157,11 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
-                        localStorage.setItem('location', location);
+                        window.localStorage.setItem('location', location);
                         var weather = JSON.parse(xhr.responseText);
                         document.getElementById('weather').textContent = Math.round(weather.temperature) + '°C in ' + weather.location;
                     } else {
-                        localStorage.removeItem('location');
+                        window.localStorage.removeItem('location');
                         alert('Failed to get weather information. Click cancel to disable EeeWeather.');
                         updateWeather();
                     }
@@ -170,7 +169,7 @@
             }
             xhr.send();
         }
-        setInterval(updateWeather, 1800000); // 30 minutes
+        setInterval(updateWeather, 1800000);
         updateWeather();
     </script>
 </body>
