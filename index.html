@@ -100,8 +100,8 @@
         function updateImage() {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/images/unsplash', true);
-            xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
-            xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
+            // xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+            // xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var newBackground = currentBackground == 1 ? 2 : 1;
@@ -152,8 +152,8 @@
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'http://kind-cute-polecat.ngrok-free.app/weather/' + location, true);
-            xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
-            xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
+            // xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+            // xhr.setRequestHeader('User-Agent', 'EeeBoard/1.0.0');
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
